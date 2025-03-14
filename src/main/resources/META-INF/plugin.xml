@@ -1,24 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <idea-plugin>
     <id>com.lxd.webviewplugin</id>
     <name>WebView</name>
-    <version>1.0</version>
-    <vendor email="1158672373@qq.com" url="http://www.example.com">xiaodong</vendor>
+    <version>1.0.1</version>
+    <vendor email="xiaodonglicn@outlook.com" url="https://github.com/xiaodonglicn/webView">xiaodong</vendor>
 
-    <description>
-        此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下： 高效浏览网页、测试前端代码、查阅在线文档，极大提升了开发效率。
-    </description>
-    <description>
-        This plugin provides useful features for enhancing your development experience. It includes tools to improve productivity and code quality.
-    </description>
+    <!-- Dependencies -->
+    <depends>com.intellij.modules.platform</depends>
 
+    <!-- Build Range -->
+<!--    <since-build>222</since-build>-->
+<!--    <until-build>232.*</until-build>-->
 
+    <!-- Actions -->
     <actions>
-        <action id="com.lxd.webviewplugin.OpenWebViewAction" class="com.lxd.webviewplugin.OpenWebViewAction" text="Open xiaodong's WebView" description="Open a WebView in a ToolWindow">
+        <action id="com.lxd.webviewplugin.OpenWebViewAction" class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView" description="Open a WebView in a ToolWindow">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 
+    <!-- Extensions -->
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="WebView" anchor="right" factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
     </extensions>
+
+    <!-- Description -->
+    <description><![CDATA[
+           此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：高效浏览网页、测试前端代码、查阅在线文档，极大提升了开发效率。
+           
+           This plugin provides useful features for enhancing your development experience. It includes tools to improve productivity and code quality.
+       ]]></description>
+
+    <!-- Change Notes -->
+    <change-notes><![CDATA[
+           - Initial release
+       ]]></change-notes>
 </idea-plugin>
+   

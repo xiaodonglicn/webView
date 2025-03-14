@@ -5,15 +5,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
     <style>
         body {
-            position: relative; /* 为绝对定位提供参考 */
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: radial-gradient(circle, #dcdcdc, #8c8c8c); /* 水墨灰色渐变背景 */
-            color: rgba(0, 0, 0, 0.8); /* 深灰色文字 */
-            font-family: 'STKaiti', serif; /* 书法字体 */
+            background: radial-gradient(circle, #dcdcdc, #8c8c8c);
+            color: rgba(0, 0, 0, 0.8);
+            font-family: 'STKaiti', serif;
             font-size: 24px;
             line-height: 1.5;
             text-align: center;
@@ -24,9 +24,9 @@
         .content-box {
             position: relative;
             max-width: 80%;
-            writing-mode: vertical-rl; /* 竖版排列，从右到左 */
-            text-orientation: upright; /* 文字保持直立 */
-            text-align: right; /* 文字靠右对齐 */
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            text-align: right;
         }
 
         .content-box::before {
@@ -36,7 +36,7 @@
             left: -20px;
             right: -20px;
             bottom: -20px;
-            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
+            border: 2px solid rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
 
@@ -44,55 +44,58 @@
             position: absolute;
             bottom: -30px;
             left: -30px;
-            font-family: 'Noto Serif SC', serif; /* 引入书法字体 */
-            font-size: 36px; /* 增大字号以突出印章效果 */
-            color: red; /* 印章颜色为红色 */
+            font-family: 'Noto Serif SC', serif;
+            font-size: 36px;
+            color: red;
             font-weight: bold;
-            transform: rotate(0deg); /* 不旋转，保持正向 */
+            transform: rotate(0deg);
         }
 
         /* 优化：链接框样式 */
         .link-box {
-            position: absolute; /* 固定在左下角 */
-            bottom: 50px; /* 调整距离底部的距离，避免被遮挡 */
-            left: 20px; /* 距离左侧 20px */
-            padding: 10px 20px; /* 内边距 */
-            max-width: 300px; /* 较小的宽度 */
-            max-height: 200px; /* 限制最大高度 */
-            overflow-y: auto; /* 启用垂直滚动条 */
-            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
-            border-radius: 10px; /* 圆角 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+            position: absolute;
+            bottom: 50px;
+            left: 20px;
+            padding: 10px 20px;
+            max-width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Noto Serif SC', serif; /* 更改字体为书法字体 */
+            font-size: 16px; /* 减小字体大小 */
+            line-height: 1.4; /* 调整行高 */
         }
 
         .link-box a {
-            display: block; /* 每个链接独占一行 */
-            margin: 5px 0; /* 链接之间的间距 */
-            font-family: 'Noto Serif SC', serif; /* 统一字体 */
-            font-size: 18px; /* 字体大小适中 */
+            display: block;
+            margin: 5px 0;
+            font-weight: 500; /* 增加字体粗细 */
             color: rgba(0, 0, 0, 0.6); /* 浅灰色文字 */
-            text-decoration: none; /* 去掉下划线 */
-            text-align: center; /* 居中对齐 */
+            text-decoration: none;
+            text-align: center;
         }
 
         .link-box a:hover {
             color: rgba(0, 0, 0, 0.8); /* 鼠标悬停时加深颜色 */
         }
+
         /* 新增：右上角框样式 */
         .quote-box {
-            position: absolute; /* 固定在右上角 */
-            top: 20px; /* 距离顶部 20px */
-            right: 20px; /* 距离右侧 20px */
-            padding: 20px; /* 内边距 */
-            max-width: 300px; /* 较小的宽度 */
-            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
-            border-radius: 10px; /* 圆角 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
-            writing-mode: vertical-rl; /* 竖版排列，从右到左 */
-            text-orientation: upright; /* 文字保持直立 */
-            text-align: right; /* 文字靠右对齐 */
-            font-size: 24px; /* 字体大小适中 */
-            line-height: 1.5; /* 行高 */
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 20px;
+            max-width: 300px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            text-align: right;
+            font-size: 24px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -108,13 +111,11 @@
 
 <!-- 优化：链接框 -->
 <div class="link-box">
-    <a href="https://www.zhihu.com?theme=dark" class="blog-link">知乎</a>
-    <a href="https://www.baidu.com/" class="blog-link">百度</a>
-    <a href="https://leetcode.cn/" class="blog-link">力扣</a>
-    <a href="https://xz.aliyun.com/search?keyword=Kerberos" class="blog-link">先知</a>
-    <a href="http://47.120.64.211:8090/" class="blog-link">惊喜</a>
-    <!--    <a href="https://example.com/link3" class="blog-link">更多链接3</a>-->
+    <a href="#">Art is long, life is short.</a>
+<!--    <a href="#">岁月不居，时节如流。</a>-->
+<!--    <a href="#">书犹药也，善读之可以医愚。</a>-->
 </div>
+
 <!-- 新增：右上角框 -->
 <div class="quote-box">
     若有诗书藏于心<br>

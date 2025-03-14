@@ -27,12 +27,13 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
         // 创建地址栏和访问按钮
         JPanel topPanel = new JPanel(new BorderLayout());
-        urlField = new JTextField("https://www.zhihu.com?theme=dark"); // 默认网址
-        JButton visitButton = new JButton("你点我噻");
+        urlField = new JTextField("请输入正确的网址"); // 默认网址
+//        urlField = new JTextField("https://www.zhihu.com?theme=dark"); // 默认网址
+        JButton visitButton = new JButton("Go");
         topPanel.add(urlField, BorderLayout.CENTER);
         topPanel.add(visitButton, BorderLayout.EAST);
 
-        JButton homeButton = new JButton("返回首页"); // 新增【返回首页】按钮
+        JButton homeButton = new JButton("Home"); // 新增【返回首页】按钮
         topPanel.add(urlField, BorderLayout.CENTER);
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0)); // 按钮容器
         buttonPanel.add(visitButton);
