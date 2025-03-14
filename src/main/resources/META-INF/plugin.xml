@@ -34,6 +34,7 @@
     <!-- Change Notes -->
     <change-notes><![CDATA[
            - Initial release
+           - Out-of-date api optimization
        ]]></change-notes>
 </idea-plugin>
    
