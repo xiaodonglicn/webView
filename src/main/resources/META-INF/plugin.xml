@@ -1,0 +1,40 @@
+<idea-plugin>
+    <id>com.example.webviewplugin</id>
+    <name>WebViewPlugin</name>
+    <version>1.0</version>
+    <vendor email="1158672373@qq.com" url="http://www.example.com">xiaodong</vendor>
+    <!-- 添加License信息 -->
+
+<!--    <license>-->
+<!--        Apache License 2.0-->
+<!--        https://www.apache.org/licenses/LICENSE-2.0-->
+<!--    </license>-->
+
+    <description>
+        此插件为IDEA集成开发环境添加了一个内置浏览器功能，
+        允许开发者在不离开IDE的情况下：
+        - 高效浏览网页
+        - 测试前端代码
+        - 查阅在线文档
+        极大提升了开发效率。
+    </description>
+    <description>
+        This plugin adds an integrated browser feature to the IDEA development environment,
+        allowing developers to:
+        - Efficiently browse web pages
+        - Test front-end code
+        - Consult online documentation
+        All without leaving the IDE, greatly improving development efficiency.
+    </description>
+
+
+    <actions>
+        <action id="com.example.webviewplugin.OpenWebViewAction" class="com.example.webviewplugin.OpenWebViewAction" text="Open xiaodong's WebView" description="Open a WebView in a ToolWindow">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="WebView" anchor="right" factoryClass="com.example.webviewplugin.WebViewToolWindow"/>
+    </extensions>
+</idea-plugin>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            position: relative; /* 为绝对定位提供参考 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle, #dcdcdc, #8c8c8c); /* 水墨灰色渐变背景 */
+            color: rgba(0, 0, 0, 0.8); /* 深灰色文字 */
+            font-family: 'STKaiti', serif; /* 书法字体 */
+            font-size: 24px;
+            line-height: 1.5;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 上方内容框样式 */
+        .content-box {
+            position: relative;
+            max-width: 80%;
+            writing-mode: vertical-rl; /* 竖版排列，从右到左 */
+            text-orientation: upright; /* 文字保持直立 */
+            text-align: right; /* 文字靠右对齐 */
+        }
+
+        .content-box::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
+            border-radius: 10px;
+        }
+
+        .seal {
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            font-family: 'Noto Serif SC', serif; /* 引入书法字体 */
+            font-size: 36px; /* 增大字号以突出印章效果 */
+            color: red; /* 印章颜色为红色 */
+            font-weight: bold;
+            transform: rotate(0deg); /* 不旋转，保持正向 */
+        }
+
+        /* 优化：链接框样式 */
+        .link-box {
+            position: absolute; /* 固定在左下角 */
+            bottom: 50px; /* 调整距离底部的距离，避免被遮挡 */
+            left: 20px; /* 距离左侧 20px */
+            padding: 10px 20px; /* 内边距 */
+            max-width: 300px; /* 较小的宽度 */
+            max-height: 200px; /* 限制最大高度 */
+            overflow-y: auto; /* 启用垂直滚动条 */
+            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
+            border-radius: 10px; /* 圆角 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+        }
+
+        .link-box a {
+            display: block; /* 每个链接独占一行 */
+            margin: 5px 0; /* 链接之间的间距 */
+            font-family: 'Noto Serif SC', serif; /* 统一字体 */
+            font-size: 18px; /* 字体大小适中 */
+            color: rgba(0, 0, 0, 0.6); /* 浅灰色文字 */
+            text-decoration: none; /* 去掉下划线 */
+            text-align: center; /* 居中对齐 */
+        }
+
+        .link-box a:hover {
+            color: rgba(0, 0, 0, 0.8); /* 鼠标悬停时加深颜色 */
+        }
+        /* 新增：右上角框样式 */
+        .quote-box {
+            position: absolute; /* 固定在右上角 */
+            top: 20px; /* 距离顶部 20px */
+            right: 20px; /* 距离右侧 20px */
+            padding: 20px; /* 内边距 */
+            max-width: 300px; /* 较小的宽度 */
+            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */
+            border-radius: 10px; /* 圆角 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+            writing-mode: vertical-rl; /* 竖版排列，从右到左 */
+            text-orientation: upright; /* 文字保持直立 */
+            text-align: right; /* 文字靠右对齐 */
+            font-size: 24px; /* 字体大小适中 */
+            line-height: 1.5; /* 行高 */
+        }
+    </style>
+</head>
+<body>
+<!-- 上方内容框 -->
+<div class="content-box">
+    晓逐风云意未央<br>
+    东凌绝顶瞰八荒<br>
+    制胜长空凭羽翼<br>
+    作赋星辰耀穹苍
+    <span class="seal">東</span> <!-- 印章内容 -->
+</div>
+
+<!-- 优化：链接框 -->
+<div class="link-box">
+    <a href="https://www.zhihu.com?theme=dark" class="blog-link">知乎</a>
+    <a href="https://www.baidu.com/" class="blog-link">百度</a>
+    <a href="https://leetcode.cn/" class="blog-link">力扣</a>
+    <a href="https://xz.aliyun.com/search?keyword=Kerberos" class="blog-link">先知</a>
+    <a href="http://47.120.64.211:8090/" class="blog-link">惊喜</a>
+    <!--    <a href="https://example.com/link3" class="blog-link">更多链接3</a>-->
+</div>
+<!-- 新增：右上角框 -->
+<div class="quote-box">
+    若有诗书藏于心<br>
+    岁月从不败少年
+</div>
+</body>
+</html>
