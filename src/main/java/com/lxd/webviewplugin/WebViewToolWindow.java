@@ -5,6 +5,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.jcef.JBCefBrowser;
 
 import javax.swing.*;
@@ -24,7 +25,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
         // 创建主面板
         JPanel panel = new JPanel(new BorderLayout());
-
         // 创建地址栏和访问按钮
         JPanel topPanel = new JPanel(new BorderLayout());
         urlField = new JTextField("请输入正确的网址"); // 默认网址
@@ -44,10 +44,8 @@ public class WebViewToolWindow implements ToolWindowFactory {
         browser = new JBCefBrowser();
         panel.add(topPanel, BorderLayout.NORTH);
         panel.add(browser.getComponent(), BorderLayout.CENTER);
-
         // 加载欢迎语
         loadWelcomeMessage2();
-
         // 处理访问按钮点击事件
         visitButton.addActionListener(new ActionListener() {
             @Override
@@ -63,11 +61,10 @@ public class WebViewToolWindow implements ToolWindowFactory {
         });
         // 处理【返回首页】按钮点击事件
         homeButton.addActionListener(e -> loadWelcomeMessage2());
-
         // 将面板添加到 ToolWindow
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(panel, "", false);
-        toolWindow.getContentManager().addContent(content);
+        ContentManager contentManager = toolWindow.getContentManager();
+        Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false); // 保留旧方法作为过渡
+        contentManager.addContent(content);
     }
 
 
@@ -101,70 +98,5 @@ public class WebViewToolWindow implements ToolWindowFactory {
             System.err.println("Failed to load welcome.html");
         }
     }
-    /**
-     * 加载欢迎语
-     */
-    private void loadWelcomeMessage() {
 
-        String welcomeHtml = "<!DOCTYPE html>\n" +
-                "<html>\n" +
-                "<head>\n" +
-                "    <link href=\"https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap\" rel=\"stylesheet\">\n" +
-                "    <style>\n" +
-                "        body {\n" +
-                "            display: flex;\n" +
-                "            justify-content: center;\n" +
-                "            align-items: center;\n" +
-                "            height: 100vh;\n" +
-                "            margin: 0;\n" +
-                "            background: radial-gradient(circle, #dcdcdc, #8c8c8c); /* 水墨灰色渐变背景 */\n" +
-                "            color: rgba(0, 0, 0, 0.8); /* 深灰色文字 */\n" +
-                "            font-family: 'STKaiti', serif; /* 书法字体 */\n" +
-                "            font-size: 24px;\n" +
-                "            line-height: 1.5;\n" +
-                "            text-align: center;\n" +
-                "            padding: 20px;\n" +
-                "        }\n" +
-                "        div {\n" +
-                "            position: relative;\n" +
-                "            max-width: 80%;\n" +
-                "            writing-mode: vertical-rl; /* 竖版排列，从右到左 */\n" +
-                "            text-orientation: upright; /* 文字保持直立 */\n" +
-                "            text-align: right; /* 文字靠右对齐 */\n" +
-                "        }\n" +
-                "        div::before {\n" +
-                "            content: \"\";\n" +
-                "            position: absolute;\n" +
-                "            top: -20px;\n" +
-                "            left: -20px;\n" +
-                "            right: -20px;\n" +
-                "            bottom: -20px;\n" +
-                "            border: 2px solid rgba(0, 0, 0, 0.2); /* 淡黑色边框 */\n" +
-                "            border-radius: 10px;\n" +
-                "        }\n" +
-                "        .seal {\n" +
-                "            position: absolute;\n" +
-                "            bottom: -30px;\n" +
-                "            left: -30px;\n" +
-                "            font-family: 'Noto Serif SC', serif; /* 引入书法字体 */\n" +
-                "            font-size: 36px; /* 增大字号以突出印章效果 */\n" +
-                "            color: red; /* 印章颜色为红色 */\n" +
-                "            font-weight: bold;\n" +
-                "            transform: rotate(0deg); /* 不旋转，保持正向 */\n" +
-                "        }\n" +
-                "    </style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "    <div>\n" +
-                "        晓逐风云意未央<br>\n" +
-                "        东凌绝顶瞰八荒<br>\n" +
-                "        制胜长空凭羽翼<br>\n" +
-                "        作赋星辰耀穹苍\n" +
-                "        <span class=\"seal\">東</span> <!-- 印章内容 -->\n" +
-                "    </div>\n" +
-                "</body>\n" +
-                "</html>";
-
-        browser.loadHTML(welcomeHtml);
-    }
 }
