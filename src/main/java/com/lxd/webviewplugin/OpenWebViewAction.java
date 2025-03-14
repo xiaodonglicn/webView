@@ -1,4 +1,4 @@
-package com.example.webviewplugin;
+package com.lxd.webviewplugin;
 
 
 import com.intellij.openapi.actionSystem.AnAction;

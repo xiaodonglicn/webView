@@ -1,4 +1,4 @@
-package com.example.webviewplugin;
+package com.lxd.webviewplugin;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
