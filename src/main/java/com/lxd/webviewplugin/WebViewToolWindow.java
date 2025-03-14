@@ -1,5 +1,6 @@
 package com.lxd.webviewplugin;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -20,6 +21,7 @@ import java.io.InputStreamReader;
 public class WebViewToolWindow implements ToolWindowFactory {
     private JBCefBrowser browser;
     private JTextField urlField;
+    private ContentFactory contentFactory;
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -63,7 +65,10 @@ public class WebViewToolWindow implements ToolWindowFactory {
         homeButton.addActionListener(e -> loadWelcomeMessage2());
         // 将面板添加到 ToolWindow
         ContentManager contentManager = toolWindow.getContentManager();
-        Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false); // 保留旧方法作为过渡
+        if (contentFactory == null) {
+            contentFactory = ApplicationManager.getApplication().getService(ContentFactory.class);
+        }
+        Content content = contentFactory.createContent(panel, "", false); // 保留旧方法作为过渡
         contentManager.addContent(content);
     }
 

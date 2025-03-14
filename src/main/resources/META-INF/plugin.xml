@@ -26,16 +26,29 @@
 
     <!-- Description -->
     <description><![CDATA[
-           This plugin provides useful features for enhancing your development experience. It includes tools to improve productivity and code quality.
+        This plugin provides useful features for enhancing your development experience.<br>
+        It includes tools to improve productivity and code quality.<br><br>
 
-           此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：高效浏览网页、测试前端代码、查阅在线文档，极大提升了开发效率。
-       ]]></description>
+        此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：<br>
+        - 高效浏览网页<br>
+        - 测试前端代码<br>
+        - 查阅在线文档<br>
+        极大提升了开发效率。<br><br>
+
+        If you would like to engage in deeper technical discussions, feel free to contact me:<br>
+        - WeChat: X_X__88888888<br>
+        - Email: xiaodonglicn@outlook.com<br><br>
+
+        如果你想进行更深层次的技术交流，请联系我：<br>
+        - 微信：X_X__88888888<br>
+        - 邮箱：xiaodonglicn@outlook.com
+    ]]></description>
 
     <!-- Change Notes -->
     <change-notes><![CDATA[
-           - Initial release
-           - Out-of-date api optimization
-           - description optimization
-       ]]></change-notes>
+        - Initial release<br>
+        - Out-of-date API optimization<br>
+        - Description optimization
+    ]]></change-notes>
 </idea-plugin>
    
