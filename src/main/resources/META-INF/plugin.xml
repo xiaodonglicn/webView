@@ -26,15 +26,16 @@
 
     <!-- Description -->
     <description><![CDATA[
-           此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：高效浏览网页、测试前端代码、查阅在线文档，极大提升了开发效率。
-           
            This plugin provides useful features for enhancing your development experience. It includes tools to improve productivity and code quality.
+
+           此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：高效浏览网页、测试前端代码、查阅在线文档，极大提升了开发效率。
        ]]></description>
 
     <!-- Change Notes -->
     <change-notes><![CDATA[
            - Initial release
            - Out-of-date api optimization
+           - description optimization
        ]]></change-notes>
 </idea-plugin>
    
