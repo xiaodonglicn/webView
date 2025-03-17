@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.lxd"
-version = "1.7-SNAPSHOT"
+version = "1.8-SNAPSHOT"
 
 repositories {
     maven {
