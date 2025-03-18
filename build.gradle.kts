@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.lxd"
-version = "2.0-SNAPSHOT"
+version = "2.1"
 
 repositories {
     maven {
@@ -30,7 +30,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("202")
-        untilBuild.set("242.*")
+        untilBuild.set("243.*")
     }
 
     signPlugin {
