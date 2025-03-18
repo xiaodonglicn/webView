@@ -29,7 +29,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
         JPanel panel = new JPanel(new BorderLayout());
         // 创建地址栏和访问按钮
         JPanel topPanel = new JPanel(new BorderLayout());
-        urlField = new JTextField("请输入正确的网址"); // 默认网址
+        urlField = new JTextField("Please enter the correct URL"); // 默认网址
 //        urlField = new JTextField("https://www.zhihu.com?theme=dark"); // 默认网址
         JButton visitButton = new JButton("Go");
         topPanel.add(urlField, BorderLayout.CENTER);
@@ -96,8 +96,8 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
 
     private void loadWelcomeMessage2() {
-//        String htmlContent = loadHtmlFromResource("welcome.html");
-        String htmlContent = getHtml();
+        String htmlContent = loadHtmlFromResource("welcome.html");
+//        String htmlContent = getHtml();
         if (htmlContent != null) {
             browser.loadHTML(htmlContent); // 设置到 browser 中
         } else {

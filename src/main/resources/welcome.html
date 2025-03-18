@@ -1,5 +1,130 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="zh-CN">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">-->
+<!--    <style>-->
+<!--        body {-->
+<!--            position: relative;-->
+<!--            display: flex;-->
+<!--            justify-content: center;-->
+<!--            align-items: center;-->
+<!--            height: 100vh;-->
+<!--            margin: 0;-->
+<!--            background: radial-gradient(circle, #dcdcdc, #8c8c8c);-->
+<!--            color: rgba(0, 0, 0, 0.8);-->
+<!--            font-family: 'STKaiti', serif;-->
+<!--            font-size: 24px;-->
+<!--            line-height: 1.5;-->
+<!--            text-align: center;-->
+<!--            padding: 20px;-->
+<!--        }-->
+
+<!--        /* 上方内容框样式 */-->
+<!--        .content-box {-->
+<!--            position: relative;-->
+<!--            max-width: 80%;-->
+<!--            writing-mode: vertical-rl;-->
+<!--            text-orientation: upright;-->
+<!--            text-align: right;-->
+<!--        }-->
+
+<!--        .content-box::before {-->
+<!--            content: "";-->
+<!--            position: absolute;-->
+<!--            top: -20px;-->
+<!--            left: -20px;-->
+<!--            right: -20px;-->
+<!--            bottom: -20px;-->
+<!--            border: 2px solid rgba(0, 0, 0, 0.2);-->
+<!--            border-radius: 10px;-->
+<!--        }-->
+
+<!--        .seal {-->
+<!--            position: absolute;-->
+<!--            bottom: -30px;-->
+<!--            left: -30px;-->
+<!--            font-family: 'Noto Serif SC', serif;-->
+<!--            font-size: 36px;-->
+<!--            color: red;-->
+<!--            font-weight: bold;-->
+<!--            transform: rotate(0deg);-->
+<!--        }-->
+
+<!--        /* 优化：链接框样式 */-->
+<!--        .link-box {-->
+<!--            position: absolute;-->
+<!--            bottom: 50px;-->
+<!--            left: 20px;-->
+<!--            padding: 10px 20px;-->
+<!--            max-width: 300px;-->
+<!--            max-height: 200px;-->
+<!--            overflow-y: auto;-->
+<!--            border: 2px solid rgba(0, 0, 0, 0.2);-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);-->
+<!--            font-family: 'Noto Serif SC', serif; /* 更改字体为书法字体 */-->
+<!--            font-size: 16px; /* 减小字体大小 */-->
+<!--            line-height: 1.4; /* 调整行高 */-->
+<!--        }-->
+
+<!--        .link-box a {-->
+<!--            display: block;-->
+<!--            margin: 5px 0;-->
+<!--            font-weight: 500; /* 增加字体粗细 */-->
+<!--            color: rgba(0, 0, 0, 0.6); /* 浅灰色文字 */-->
+<!--            text-decoration: none;-->
+<!--            text-align: center;-->
+<!--        }-->
+
+<!--        .link-box a:hover {-->
+<!--            color: rgba(0, 0, 0, 0.8); /* 鼠标悬停时加深颜色 */-->
+<!--        }-->
+
+<!--        /* 新增：右上角框样式 */-->
+<!--        .quote-box {-->
+<!--            position: absolute;-->
+<!--            top: 20px;-->
+<!--            right: 20px;-->
+<!--            padding: 20px;-->
+<!--            max-width: 300px;-->
+<!--            border: 2px solid rgba(0, 0, 0, 0.2);-->
+<!--            border-radius: 10px;-->
+<!--            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);-->
+<!--            writing-mode: vertical-rl;-->
+<!--            text-orientation: upright;-->
+<!--            text-align: right;-->
+<!--            font-size: 24px;-->
+<!--            line-height: 1.5;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; 上方内容框 &ndash;&gt;-->
+<!--<div class="content-box">-->
+<!--    晓逐风云意未央<br>-->
+<!--    东凌绝顶瞰八荒<br>-->
+<!--    制胜长空凭羽翼<br>-->
+<!--    作赋星辰耀穹苍-->
+<!--    <span class="seal">東</span> &lt;!&ndash; 印章内容 &ndash;&gt;-->
+<!--</div>-->
+
+<!--&lt;!&ndash; 优化：链接框 &ndash;&gt;-->
+<!--<div class="link-box">-->
+<!--    <a href="#">Art is long, life is short.</a>-->
+<!--&lt;!&ndash;    <a href="#">岁月不居，时节如流。</a>&ndash;&gt;-->
+<!--&lt;!&ndash;    <a href="#">书犹药也，善读之可以医愚。</a>&ndash;&gt;-->
+<!--</div>-->
+
+<!--&lt;!&ndash; 新增：右上角框 &ndash;&gt;-->
+<!--<div class="quote-box">-->
+<!--    若有诗书藏于心<br>-->
+<!--    岁月从不败少年-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&display=swap" rel="stylesheet">
@@ -12,114 +137,27 @@
             height: 100vh;
             margin: 0;
             background: radial-gradient(circle, #dcdcdc, #8c8c8c);
-            color: rgba(0, 0, 0, 0.8);
-            font-family: 'STKaiti', serif;
-            font-size: 24px;
+            color: rgba(255, 255, 255, 0.8); /* 浅色文字 */
+            font-family: 'Noto Serif SC', serif;
+            font-size: 18px; /* 调整字体大小 */
             line-height: 1.5;
             text-align: center;
-            padding: 20px;
         }
 
-        /* 上方内容框样式 */
-        .content-box {
+        .prompt-box {
             position: relative;
             max-width: 80%;
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            text-align: right;
-        }
-
-        .content-box::before {
-            content: "";
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            border: 2px solid rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .seal {
-            position: absolute;
-            bottom: -30px;
-            left: -30px;
-            font-family: 'Noto Serif SC', serif;
-            font-size: 36px;
-            color: red;
-            font-weight: bold;
-            transform: rotate(0deg);
-        }
-
-        /* 优化：链接框样式 */
-        .link-box {
-            position: absolute;
-            bottom: 50px;
-            left: 20px;
-            padding: 10px 20px;
-            max-width: 300px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 2px solid rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-family: 'Noto Serif SC', serif; /* 更改字体为书法字体 */
-            font-size: 16px; /* 减小字体大小 */
-            line-height: 1.4; /* 调整行高 */
-        }
-
-        .link-box a {
-            display: block;
-            margin: 5px 0;
-            font-weight: 500; /* 增加字体粗细 */
-            color: rgba(0, 0, 0, 0.6); /* 浅灰色文字 */
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .link-box a:hover {
-            color: rgba(0, 0, 0, 0.8); /* 鼠标悬停时加深颜色 */
-        }
-
-        /* 新增：右上角框样式 */
-        .quote-box {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             padding: 20px;
-            max-width: 300px;
-            border: 2px solid rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            text-align: right;
-            font-size: 24px;
-            line-height: 1.5;
+            background: rgba(0, 0, 0, 0.1); /* 背景透明度 */
         }
     </style>
 </head>
 <body>
-<!-- 上方内容框 -->
-<div class="content-box">
-    晓逐风云意未央<br>
-    东凌绝顶瞰八荒<br>
-    制胜长空凭羽翼<br>
-    作赋星辰耀穹苍
-    <span class="seal">東</span> <!-- 印章内容 -->
-</div>
-
-<!-- 优化：链接框 -->
-<div class="link-box">
-    <a href="#">Art is long, life is short.</a>
-<!--    <a href="#">岁月不居，时节如流。</a>-->
-<!--    <a href="#">书犹药也，善读之可以医愚。</a>-->
-</div>
-
-<!-- 新增：右上角框 -->
-<div class="quote-box">
-    若有诗书藏于心<br>
-    岁月从不败少年
+<!-- 提示框 -->
+<div class="prompt-box">
+    Enter the URL in the input box above and click the [Go] button to start your experience
 </div>
 </body>
 </html>
