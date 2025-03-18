@@ -53,8 +53,9 @@
     <change-notes><![CDATA[
         - Initial release<br>
         - Out-of-date API optimization<br>
-        - Description optimization
-        - Logo optimization
+        - Description optimization<br>
+        - Logo optimization<br>
+        - Version compatibility
     ]]></change-notes>
 </idea-plugin>
    
