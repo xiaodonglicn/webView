@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.lxd"
-version = "2.2.3"
+version = "3.0.1"
 
 repositories {
     maven {

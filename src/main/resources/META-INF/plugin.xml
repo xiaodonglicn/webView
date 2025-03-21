@@ -8,44 +8,48 @@
     <!-- Dependencies -->
     <depends>com.intellij.modules.platform</depends>
 
-    <!-- Build Range -->
-<!--    <since-build>222</since-build>-->
-<!--    <until-build>232.*</until-build>-->
-
     <!-- Actions -->
     <actions>
-        <action id="com.lxd.webviewplugin.OpenWebViewAction" icon="AllIcons.Javaee.WebModuleGroup" class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView" description="Open a WebView in a ToolWindow">
+        <action id="com.lxd.webviewplugin.OpenWebViewAction" icon="AllIcons.Javaee.WebModuleGroup"
+                class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView"
+                description="Open a WebView in a ToolWindow">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 
     <!-- Extensions -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="WebView" anchor="right" icon="AllIcons.Javaee.WebModuleGroup" factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
+        <toolWindow id="WebView" anchor="right" icon="AllIcons.Javaee.WebModuleGroup"
+                    factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
     </extensions>
 
     <!-- Description -->
     <description><![CDATA[
-        This plugin adds a built-in browser capability to the jetbrains integrated development environment, allowing developers to: <br>
+        This plugin adds a built-in browser feature to the jetbrains integrated development environment in the toolbar to the right of the editor, allowing developers to: <br>
         - efficiently browse the web<br>
         - test front-end code<br>
-        - consult online documentation without leaving the IDE greatly improving development efficiency.<br><br>
+        - consult online documentation without leaving the IDE greatly improving development efficiency.<br>
+        as shown in the figure：<br><br>
 
-        此插件为jetbrains集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：<br>
+        此插件为jetbrains集成开发环境添加了一个在编辑器右侧工具栏的内置浏览器功能，允许开发者在不离开IDE的情况下：<br>
         - 高效浏览网页<br>
         - 测试前端代码<br>
         - 查阅在线文档<br>
-        极大提升了开发效率。<br><br>
+        极大提升了开发效率。<br>
+        如下图：<br><br>
+
+        <img src="https://plugins.jetbrains.com/files/26826/screenshot_0497f4a4-c1d3-4a18-8f44-a6a2865428e6" alt="Plug-in installation complete diagram（插件安装完成示意图）" width="400"><br>
+        <img src="https://plugins.jetbrains.com/files/26826/screenshot_98fb58c3-694e-4415-8c20-d98eee4a609a" alt="Access site diagram（访问网站示意图）" width="400"><br>
 
         If you would like to engage in deeper technical discussions, feel free to contact me:<br>
-        - WeChat: X_X__88888888<br>
         - Email: xiaodonglicn@outlook.com<br>
-        - LinkedIn: linkedin.com/in/xiaodonglicn<br><br>
+        - LinkedIn: linkedin.com/in/xiaodonglicn<br>
+        - WeChat: X_X__88888888<br><br>
 
         如果你想进行更深层次的技术交流，请联系我：<br>
-        - 微信：X_X__88888888<br>
         - 邮箱：xiaodonglicn@outlook.com<br>
-        - 领英：linkedin.com/in/xiaodonglicn
+        - 领英：linkedin.com/in/xiaodonglicn<br>
+        - 微信：X_X__88888888<br>
 
     ]]></description>
 
