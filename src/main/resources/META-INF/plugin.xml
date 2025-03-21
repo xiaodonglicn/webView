@@ -26,12 +26,12 @@
 
     <!-- Description -->
     <description><![CDATA[
-        This plugin adds a built-in browser capability to the IDEA integrated development environment, allowing developers to: <br>
+        This plugin adds a built-in browser capability to the jetbrains integrated development environment, allowing developers to: <br>
         - efficiently browse the web<br>
         - test front-end code<br>
         - consult online documentation without leaving the IDE greatly improving development efficiency.<br><br>
 
-        此插件为IDEA集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：<br>
+        此插件为jetbrains集成开发环境添加了一个内置浏览器功能，允许开发者在不离开IDE的情况下：<br>
         - 高效浏览网页<br>
         - 测试前端代码<br>
         - 查阅在线文档<br>
