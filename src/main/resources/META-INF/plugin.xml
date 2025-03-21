@@ -14,14 +14,14 @@
 
     <!-- Actions -->
     <actions>
-        <action id="com.lxd.webviewplugin.OpenWebViewAction" class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView" description="Open a WebView in a ToolWindow">
+        <action id="com.lxd.webviewplugin.OpenWebViewAction" icon="AllIcons.Javaee.WebModuleGroup" class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView" description="Open a WebView in a ToolWindow">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 
     <!-- Extensions -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="WebView" anchor="right" factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
+        <toolWindow id="WebView" anchor="right" icon="AllIcons.Javaee.WebModuleGroup" factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
     </extensions>
 
     <!-- Description -->
