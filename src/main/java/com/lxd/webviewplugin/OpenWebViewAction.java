@@ -21,7 +21,7 @@ public class OpenWebViewAction extends AnAction {
             Messages.showErrorDialog("JCEF is not supported in this environment.", "Error");
             return;
         }
-        // 打开右侧边栏1
+        // 打开右侧边栏
         ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow("WebView");
         if (toolWindow != null) {
             toolWindow.show(null);
