@@ -59,7 +59,8 @@
         - Out-of-date API optimization<br>
         - Description optimization<br>
         - Logo optimization<br>
-        - Version compatibility
+        - Version compatibility<br>
+        - Add debugging function
     ]]></change-notes>
 </idea-plugin>
    
