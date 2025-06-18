@@ -54,13 +54,18 @@
     ]]></description>
 
     <!-- Change Notes -->
-    <change-notes><![CDATA[
-        - Initial release<br>
-        - Out-of-date API optimization<br>
-        - Description optimization<br>
-        - Logo optimization<br>
-        - Version compatibility<br>
-        - Add debugging function
-    ]]></change-notes>
+    <change-notes>
+        <![CDATA[
+            <ul style="list-style-type: disc; padding-left: 1em;">
+                <li>Initial release</li>
+                <li>Out-of-date API optimization</li>
+                <li>Description optimization</li>
+                <li>Logo optimization</li>
+                <li>Version compatibility</li>
+                <li>Add debugging function</li>
+                <li>New toolbar, web page zooming functions have been added</li>
+            </ul>
+        ]]>
+    </change-notes>
 </idea-plugin>
    
