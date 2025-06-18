@@ -2,16 +2,20 @@ package com.lxd.webviewplugin;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
 import org.cef.browser.CefBrowser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +63,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
             // 处理访问按钮点击事件
             visitButton.addActionListener(e -> {
                 String url = urlField.getText().trim();
-                if (!url.isEmpty()) {
+                if (!url.isEmpty() && browser != null) {  // 增加 browser 非空判断
                     if (!url.startsWith("http://") && !url.startsWith("https://")) {
                         url = "https://" + url;
                     }
@@ -120,45 +124,105 @@ public class WebViewToolWindow implements ToolWindowFactory {
         });
     }
 
-    /**
-     * 切换开发者工具窗口
-     */
     private void toggleDevTools() {
         ApplicationManager.getApplication().invokeLater(() -> {
-            if (devToolsFrame == null || !devToolsFrame.isVisible()) {
-                openDevTools();
-            } else {
-                devToolsFrame.setVisible(false);
-                devToolsFrame.dispose();
-                devToolsFrame = null;
+            if (!JBCefApp.isSupported()) {
+                Messages.showErrorDialog("JCEF is disabled in IDE settings", "Error");
+                return;
+            }
+            try {
+                // 检查开发者工具窗口是否已存在
+                if (devToolsFrame != null) {
+                    devToolsFrame.dispose();
+                    devToolsFrame = null;
+                    return;
+                }
+                // 优先尝试使用带坐标参数的版本
+                Point inspectAt = calculateDevToolsPosition();
+                CefBrowser devTools = browser.getCefBrowser().getDevTools(inspectAt);
+                // 失败时回退到无参版本
+                if (devTools == null) {
+                    devTools = browser.getCefBrowser().getDevTools();
+                }
+                if (devTools == null) {
+                    Messages.showErrorDialog("Developer tools are not available", "Error");
+                    return;
+                }
+                // 创建开发者工具窗口
+                devToolsFrame = new JFrame("WebView DevTools");
+                devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                devToolsFrame.setSize(800, 600);
+                devToolsFrame.setLocationRelativeTo(null);
+                // 添加开发者工具组件
+                Component devToolsUI = devTools.getUIComponent();
+                if (devToolsUI != null) {
+                    devToolsFrame.add(devToolsUI);
+                    devToolsFrame.setVisible(true);
+                }
+                // 窗口关闭监听
+                devToolsFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        devToolsFrame = null;
+                    }
+                });
+            } catch (Exception e) {
+                Messages.showErrorDialog("The current version does not support it", "Error");
+                if (devToolsFrame != null) {
+                    devToolsFrame.dispose();
+                    devToolsFrame = null;
+                }
             }
         });
     }
 
-    /**
-     * 打开开发者工具窗口
-     */
-    private void openDevTools() {
-        ApplicationManager.getApplication().invokeLater(() -> {
-            CefBrowser devTools = browser.getCefBrowser().getDevTools();
-
-            devToolsFrame = new JFrame("WebView DevTools");
-            devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            devToolsFrame.setSize(800, 600);
-            devToolsFrame.setLocationRelativeTo(null);
-
-            devToolsFrame.add(devTools.getUIComponent());
-            devToolsFrame.setVisible(true);
-
-            // 监听窗口关闭事件
-            devToolsFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                    devToolsFrame = null;
-                }
-            });
-        });
+    // 计算开发者工具窗口的显示位置
+    private Point calculateDevToolsPosition() {
+        // 默认位置（主窗口右侧）
+        Point mainWindowLoc = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .getActiveWindow().getLocation();
+        return new Point(mainWindowLoc.x + 650, mainWindowLoc.y + 50);
     }
+
+    /**
+     * 切换开发者工具窗口
+     */
+//    private void toggleDevTools() {
+//        ApplicationManager.getApplication().invokeLater(() -> {
+//            if (devToolsFrame == null || !devToolsFrame.isVisible()) {
+//                openDevTools();
+//            } else {
+//                devToolsFrame.setVisible(false);
+//                devToolsFrame.dispose();
+//                devToolsFrame = null;
+//            }
+//        });
+//    }
+//
+//    /**
+//     * 打开开发者工具窗口
+//     */
+//    private void openDevTools() {
+//        ApplicationManager.getApplication().invokeLater(() -> {
+//            CefBrowser devTools = browser.getCefBrowser().getDevTools();
+//
+//            devToolsFrame = new JFrame("WebView DevTools");
+//            devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//            devToolsFrame.setSize(800, 600);
+//            devToolsFrame.setLocationRelativeTo(null);
+//
+//            devToolsFrame.add(devTools.getUIComponent());
+//            devToolsFrame.setVisible(true);
+//
+//            // 监听窗口关闭事件
+//            devToolsFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+//                @Override
+//                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+//                    devToolsFrame = null;
+//                }
+//            });
+//        });
+//    }
 
     /**
      * 从资源文件中加载 HTML 内容
@@ -180,6 +244,9 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
     private void loadWelcomeMessage2() {
         ApplicationManager.getApplication().invokeLater(() -> {
+            if (browser == null) {
+                return;  // 增加 browser 非空判断
+            }
             String htmlContent = loadHtmlFromResource("welcome.html");
             if (htmlContent != null) {
                 browser.loadHTML(htmlContent);
