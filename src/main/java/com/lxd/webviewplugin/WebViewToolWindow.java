@@ -203,7 +203,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private void toggleDevTools() {
         ApplicationManager.getApplication().invokeLater(() -> {
             if (!JBCefApp.isSupported()) {
-                Messages.showErrorDialog("JCEF is disabled in IDE settings", "Error");
+                Messages.showInfoMessage("JCEF is disabled in IDE settings", "Information");
                 return;
             }
             try {
@@ -218,7 +218,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
                     devTools = browser.getCefBrowser().getDevTools();
                 }
                 if (devTools == null) {
-                    Messages.showErrorDialog("Developer tools are not available", "Error");
+                    Messages.showInfoMessage("Developer tools are not available", "Information");
                     return;
                 }
                 devToolsFrame = new JFrame("WebView DevTools");
@@ -237,7 +237,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
                     }
                 });
             } catch (Exception e) {
-                Messages.showErrorDialog("The current version does not support it", "Error");
+                Messages.showInfoMessage("The current version does not support it", "Information");
                 if (devToolsFrame != null) {
                     devToolsFrame.dispose();
                     devToolsFrame = null;
