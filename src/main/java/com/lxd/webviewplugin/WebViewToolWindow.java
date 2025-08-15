@@ -102,7 +102,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
         // 添加菜单项
         moreMenu.add(createHomeMenuItem());
-        moreMenu.add(createDevToolsMenuItem());
+//        moreMenu.add(createDevToolsMenuItem());
         moreMenu.addSeparator();
         moreMenu.add(createZoomInMenuItem());
         moreMenu.add(createZoomOutMenuItem());
