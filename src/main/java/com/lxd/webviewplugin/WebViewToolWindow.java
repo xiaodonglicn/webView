@@ -30,6 +30,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
     // 缩放控制变量
     private double zoomFactor = 1.0;
     private static final double ZOOM_STEP = 0.1;
+    // 在类的字段部分添加以下新字段
+    private JButton backButton;
+    private JButton forwardButton;
+    private boolean isDarkMode = false;
+    private JMenuItem themeToggleMenuItem;
+
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -42,6 +48,18 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
             // 创建浏览器组件
             browser = new JBCefBrowser();
+
+            // 添加页面加载监听器以保持主题
+//            browser.getJBCefClient().addLoadHandler(new org.cef.handler.CefLoadHandlerAdapter() {
+//                @Override
+//                public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+//                    if (!isLoading) {
+//                        // 页面加载完成后应用当前主题
+//                        ApplicationManager.getApplication().invokeLater(() -> applyTheme());
+//                    }
+//                }
+//            }, browser.getCefBrowser());
+
             panel.add(topPanel, BorderLayout.NORTH);
             panel.add(browser.getComponent(), BorderLayout.CENTER);
 
@@ -78,19 +96,92 @@ public class WebViewToolWindow implements ToolWindowFactory {
         return topPanel;
     }
 
+    private void toggleTheme() {
+        isDarkMode = !isDarkMode;
+
+        // 更新菜单项文本
+        if (themeToggleMenuItem != null) {
+            themeToggleMenuItem.setText(isDarkMode ? "Light Mode" : "Dark Mode");
+        }
+        applyTheme();
+    }
+
+    private void applyTheme() {
+        if (browser == null) return;
+
+        String css = isDarkMode ?
+                "body, html { " +
+                        "  background-color: #1e1e1e !important; " +
+                        "  color: #ffffff !important; " +
+                        "} " +
+                        "* { " +
+                        "  background-color: #1e1e1e !important; " +
+                        "  color: #ffffff !important; " +
+                        "  border-color: #444444 !important; " +
+                        "} " +
+                        "a { " +
+                        "  color: #4fc1ff !important; " +
+                        "} " +
+                        "a:hover { " +
+                        "  color: #7dd3ff !important; " +
+                        "} " +
+                        "button, input, select, textarea { " +
+                        "  background-color: #2d2d2d !important; " +
+                        "  color: #ffffff !important; " +
+                        "  border: 1px solid #555555 !important; " +
+                        "} " +
+                        "::placeholder { " +
+                        "  color: #aaaaaa !important; " +
+                        "}"
+                :
+                "body, html { " +
+                        "  background-color: #ffffff !important; " +
+                        "  color: #000000 !important; " +
+                        "} " +
+                        "* { " +
+                        "  background-color: initial !important; " +
+                        "  color: inherit !important; " +
+                        "  border-color: initial !important; " +
+                        "}";
+
+        // 注入CSS到当前页面
+        String script = "var existingStyle = document.getElementById('intellij-theme-style'); " +
+                "if (existingStyle) { " +
+                "  existingStyle.innerHTML = '" + css.replace("'", "\\'") + "'; " +
+                "} else { " +
+                "  var style = document.createElement('style'); " +
+                "  style.id = 'intellij-theme-style'; " +
+                "  style.type = 'text/css'; " +
+                "  style.innerHTML = '" + css.replace("'", "\\'") + "'; " +
+                "  document.getElementsByTagName('head')[0].appendChild(style); " +
+                "}";
+
+        browser.getCefBrowser().executeJavaScript(script, browser.getCefBrowser().getURL(), 0);
+    }
+
+    // 添加更新导航按钮状态的方法
+    private void updateNavigationButtons() {
+        if (browser != null) {
+            // 注意：JBCefBrowser目前没有直接提供canGoBack和canGoForward方法
+            // 这里我们简单地启用按钮，实际项目中可能需要更复杂的实现
+            if (backButton != null) {
+                // 可以通过其他方式检查是否可以后退
+                backButton.setEnabled(true);
+            }
+            if (forwardButton != null) {
+                forwardButton.setEnabled(true);
+            }
+        }
+    }
+
+    // 在 loadURL 之后调用此方法更新按钮状态
+    private void onUrlLoaded() {
+        ApplicationManager.getApplication().invokeLater(this::updateNavigationButtons);
+    }
+
     private JButton createGoButton() {
         JButton visitButton = new JButton("Go");
-        visitButton.addActionListener(e -> {
-            ApplicationManager.getApplication().invokeLater(() -> {
-                String url = urlField.getText().trim();
-                if (!url.isEmpty() && browser != null) {
-                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                        url = "https://" + url;
-                    }
-                    browser.loadURL(url);
-                }
-            });
-        });
+        visitButton.addActionListener(e -> navigateToUrl());
         return visitButton;
     }
 
@@ -100,10 +191,16 @@ public class WebViewToolWindow implements ToolWindowFactory {
         moreButton.setIconTextGap(8); // 文字与图标间距
         JPopupMenu moreMenu = new JPopupMenu();
 
-        // 添加菜单项
-        moreMenu.add(createHomeMenuItem());
-//        moreMenu.add(createDevToolsMenuItem());
+        // 添加导航菜单项
+        moreMenu.add(createBackMenuItem());
+        moreMenu.add(createForwardMenuItem());
         moreMenu.addSeparator();
+
+        // 添加原有菜单项
+        moreMenu.add(createHomeMenuItem());
+        moreMenu.addSeparator();
+//        moreMenu.add(createThemeToggleMenuItem());
+//        moreMenu.addSeparator();
         moreMenu.add(createZoomInMenuItem());
         moreMenu.add(createZoomOutMenuItem());
         moreMenu.add(createResetZoomMenuItem());
@@ -111,6 +208,36 @@ public class WebViewToolWindow implements ToolWindowFactory {
         // 绑定弹出菜单
         moreButton.addActionListener(e -> moreMenu.show(moreButton, 0, moreButton.getHeight()));
         return moreButton;
+    }
+
+    private JMenuItem createBackMenuItem() {
+        JMenuItem item = new JMenuItem("Back");
+        item.setIcon(AllIcons.Actions.Back);
+        item.addActionListener(e -> {
+            if (browser != null) {
+                browser.getCefBrowser().goBack();
+                updateNavigationButtons();
+            }
+        });
+        return item;
+    }
+
+    private JMenuItem createForwardMenuItem() {
+        JMenuItem item = new JMenuItem("Forward");
+        item.setIcon(AllIcons.Actions.Forward);
+        item.addActionListener(e -> {
+            if (browser != null) {
+                browser.getCefBrowser().goForward();
+                updateNavigationButtons();
+            }
+        });
+        return item;
+    }
+    private JMenuItem createThemeToggleMenuItem() {
+        themeToggleMenuItem = new JMenuItem(isDarkMode ? "Light Mode" : "Dark Mode");
+        themeToggleMenuItem.setIcon(AllIcons.General.InspectionsEye);
+        themeToggleMenuItem.addActionListener(e -> toggleTheme());
+        return themeToggleMenuItem;
     }
 
     private JMenuItem createHomeMenuItem() {
@@ -163,9 +290,8 @@ public class WebViewToolWindow implements ToolWindowFactory {
         return item;
     }
 
-
     /**
-     * URL输入框添加Placeholder效果
+     * URL输入框添加Placeholder效果和回车监听
      */
     private void addPlaceholder() {
         if (urlField == null) {
@@ -197,8 +323,33 @@ public class WebViewToolWindow implements ToolWindowFactory {
                     urlField.setForeground(Color.LIGHT_GRAY);
                 }
             }
+
+            // 添加回车键监听
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    navigateToUrl();
+                }
+            }
         });
     }
+
+    /**
+     * 导航到URL字段中指定的网址
+     */
+    private void navigateToUrl() {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            String url = urlField.getText().trim();
+            if (!url.isEmpty() && browser != null) {
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "https://" + url;
+                }
+                browser.loadURL(url);
+                onUrlLoaded(); // 更新导航按钮状态
+            }
+        });
+    }
+
 
     private void toggleDevTools() {
         ApplicationManager.getApplication().invokeLater(() -> {
