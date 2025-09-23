@@ -247,12 +247,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
         return item;
     }
 
-    private JMenuItem createDevToolsMenuItem() {
-        JMenuItem item = new JMenuItem("F12 DevTools");
-        item.setIcon(AllIcons.Toolwindows.ToolWindowDebugger);
-        item.addActionListener(e -> toggleDevTools());
-        return item;
-    }
+//    private JMenuItem createDevToolsMenuItem() {
+//        JMenuItem item = new JMenuItem("F12 DevTools");
+//        item.setIcon(AllIcons.Toolwindows.ToolWindowDebugger);
+//        item.addActionListener(e -> toggleDevTools());
+//        return item;
+//    }
 
     private JMenuItem createZoomInMenuItem() {
         JMenuItem item = new JMenuItem("Zoom In");
@@ -351,51 +351,51 @@ public class WebViewToolWindow implements ToolWindowFactory {
     }
 
 
-    private void toggleDevTools() {
-        ApplicationManager.getApplication().invokeLater(() -> {
-            if (!JBCefApp.isSupported()) {
-                Messages.showInfoMessage("JCEF is disabled in IDE settings", "Information");
-                return;
-            }
-            try {
-                if (devToolsFrame != null) {
-                    devToolsFrame.dispose();
-                    devToolsFrame = null;
-                    return;
-                }
-                Point inspectAt = calculateDevToolsPosition();
-                CefBrowser devTools = browser.getCefBrowser().getDevTools(inspectAt);
-                if (devTools == null) {
-                    devTools = browser.getCefBrowser().getDevTools();
-                }
-                if (devTools == null) {
-                    Messages.showInfoMessage("Developer tools are not available", "Information");
-                    return;
-                }
-                devToolsFrame = new JFrame("WebView DevTools");
-                devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                devToolsFrame.setSize(800, 600);
-                devToolsFrame.setLocationRelativeTo(null);
-                Component devToolsUI = devTools.getUIComponent();
-                if (devToolsUI != null) {
-                    devToolsFrame.add(devToolsUI);
-                    devToolsFrame.setVisible(true);
-                }
-                devToolsFrame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        devToolsFrame = null;
-                    }
-                });
-            } catch (Exception e) {
-                Messages.showInfoMessage("The current version does not support it", "Information");
-                if (devToolsFrame != null) {
-                    devToolsFrame.dispose();
-                    devToolsFrame = null;
-                }
-            }
-        });
-    }
+//    private void toggleDevTools() {
+//        ApplicationManager.getApplication().invokeLater(() -> {
+//            if (!JBCefApp.isSupported()) {
+//                Messages.showInfoMessage("JCEF is disabled in IDE settings", "Information");
+//                return;
+//            }
+//            try {
+//                if (devToolsFrame != null) {
+//                    devToolsFrame.dispose();
+//                    devToolsFrame = null;
+//                    return;
+//                }
+//                Point inspectAt = calculateDevToolsPosition();
+//                CefBrowser devTools = browser.getCefBrowser().getDevTools(inspectAt);
+//                if (devTools == null) {
+//                    devTools = browser.getCefBrowser().getDevTools();
+//                }
+//                if (devTools == null) {
+//                    Messages.showInfoMessage("Developer tools are not available", "Information");
+//                    return;
+//                }
+//                devToolsFrame = new JFrame("WebView DevTools");
+//                devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                devToolsFrame.setSize(800, 600);
+//                devToolsFrame.setLocationRelativeTo(null);
+//                Component devToolsUI = devTools.getUIComponent();
+//                if (devToolsUI != null) {
+//                    devToolsFrame.add(devToolsUI);
+//                    devToolsFrame.setVisible(true);
+//                }
+//                devToolsFrame.addWindowListener(new WindowAdapter() {
+//                    @Override
+//                    public void windowClosed(WindowEvent e) {
+//                        devToolsFrame = null;
+//                    }
+//                });
+//            } catch (Exception e) {
+//                Messages.showInfoMessage("The current version does not support it", "Information");
+//                if (devToolsFrame != null) {
+//                    devToolsFrame.dispose();
+//                    devToolsFrame = null;
+//                }
+//            }
+//        });
+//    }
 
     private Point calculateDevToolsPosition() {
         Point mainWindowLoc = KeyboardFocusManager.getCurrentKeyboardFocusManager()
