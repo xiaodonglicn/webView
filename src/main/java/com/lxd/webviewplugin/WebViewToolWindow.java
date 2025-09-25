@@ -35,8 +35,8 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private double zoomFactor = 1.0;
     private static final double ZOOM_STEP = 0.1;
     // 在类的字段部分添加以下新字段
-    private JButton backButton;
-    private JButton forwardButton;
+    private JMenuItem backButton;
+    private JMenuItem forwardButton;
     private boolean isDarkMode = false;
     private JMenuItem themeToggleMenuItem;
 
@@ -55,14 +55,48 @@ public class WebViewToolWindow implements ToolWindowFactory {
                 public boolean onBeforePopup(CefBrowser browser, CefFrame frame, String target_url, String target_frame_name) {
                     // 阻止弹出新窗口，在当前浏览器中加载URL
                     WebViewToolWindow.this.browser.loadURL(target_url);
-//                    WebViewToolWindow.this.urlField.setText(target_url);
                     return true; // 返回true表示取消弹窗
                 }
             }, browser.getCefBrowser());
+
+            // 添加加载监听器来处理URL更新和按钮状态
+            browser.getJBCefClient().addLoadHandler(new org.cef.handler.CefLoadHandlerAdapter() {
+                @Override
+                public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        // 更新导航按钮状态
+                        if (WebViewToolWindow.this.backButton != null) {
+                            WebViewToolWindow.this.backButton.setEnabled(canGoBack);
+                        }
+                        if (WebViewToolWindow.this.forwardButton != null) {
+                            WebViewToolWindow.this.forwardButton.setEnabled(canGoForward);
+                        }
+
+                        // 当页面加载完成时更新地址栏
+                        if (!isLoading) {
+                            String currentUrl = browser.getURL();
+                            if (urlField != null && currentUrl != null) {
+                                // 如果是内部生成的页面或about:blank，显示占位符
+                                if (currentUrl.equals("about:blank") || currentUrl.startsWith("file:///jbcefbrowser/")) {
+                                    urlField.setText(URL_MSG);
+                                    urlField.setForeground(Color.GRAY);
+                                } else {
+                                    urlField.setText(currentUrl);
+                                    urlField.setForeground(Color.LIGHT_GRAY);
+                                }
+                            }
+                        }
+                    });
+                }
+            }, browser.getCefBrowser());
+
             panel.add(topPanel, BorderLayout.NORTH);
             panel.add(browser.getComponent(), BorderLayout.CENTER);
             // 加载欢迎页面
             this.loadWelcomeMessage2();
+            // 初始化导航按钮状态
+            if (backButton != null) backButton.setEnabled(false);
+            if (forwardButton != null) forwardButton.setEnabled(false);
             // 将面板添加到 ToolWindow
             ContentManager contentManager = toolWindow.getContentManager();
             if (contentFactory == null) {
@@ -72,6 +106,7 @@ public class WebViewToolWindow implements ToolWindowFactory {
             contentManager.addContent(content);
         });
     }
+
 
     private JPanel createTopToolbar() {
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -153,28 +188,52 @@ public class WebViewToolWindow implements ToolWindowFactory {
         return moreButton;
     }
 
+//    private JMenuItem createBackMenuItem() {
+//        JMenuItem item = new JMenuItem("Back");
+//        item.setIcon(AllIcons.Actions.Back);
+//        item.addActionListener(e -> {
+//            if (browser != null) {
+//                browser.getCefBrowser().goBack();
+//                updateNavigationButtons();
+//            }
+//        });
+//        return item;
+//    }
+//
+//    private JMenuItem createForwardMenuItem() {
+//        JMenuItem item = new JMenuItem("Forward");
+//        item.setIcon(AllIcons.Actions.Forward);
+//        item.addActionListener(e -> {
+//            if (browser != null) {
+//                browser.getCefBrowser().goForward();
+//                updateNavigationButtons();
+//            }
+//        });
+//        return item;
+//    }
+
     private JMenuItem createBackMenuItem() {
-        JMenuItem item = new JMenuItem("Back");
-        item.setIcon(AllIcons.Actions.Back);
-        item.addActionListener(e -> {
+        backButton = new JMenuItem("Back");
+        backButton.setIcon(AllIcons.Actions.Back);
+        backButton.addActionListener(e -> {
             if (browser != null) {
                 browser.getCefBrowser().goBack();
-                updateNavigationButtons();
+                // 移除手动更新按钮状态，改由 LoadHandler 处理
             }
         });
-        return item;
+        return backButton;
     }
 
     private JMenuItem createForwardMenuItem() {
-        JMenuItem item = new JMenuItem("Forward");
-        item.setIcon(AllIcons.Actions.Forward);
-        item.addActionListener(e -> {
+        forwardButton = new JMenuItem("Forward");
+        forwardButton.setIcon(AllIcons.Actions.Forward);
+        forwardButton.addActionListener(e -> {
             if (browser != null) {
                 browser.getCefBrowser().goForward();
-                updateNavigationButtons();
+                // 移除手动更新按钮状态，改由 LoadHandler 处理
             }
         });
-        return item;
+        return forwardButton;
     }
 
     private JMenuItem createThemeToggleMenuItem() {
