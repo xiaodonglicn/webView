@@ -64,6 +64,9 @@
                 <li>Version compatibility</li>
                 <li>Add debugging function</li>
                 <li>New toolbar, web page zooming functions have been added</li>
+                <li>Address bar input jump optimization</li>
+                <li>The toolbar has added forward and backward functions</li>
+                <li>Click on the link in the web page to optimize</li>
             </ul>
         ]]>
     </change-notes>
