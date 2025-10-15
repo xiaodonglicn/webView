@@ -67,6 +67,7 @@
                 <li>Address bar input jump optimization</li>
                 <li>The toolbar has added forward and backward functions</li>
                 <li>Click on the link in the web page to optimize</li>
+                <li>Prompt optimization</li>
             </ul>
         ]]>
     </change-notes>
