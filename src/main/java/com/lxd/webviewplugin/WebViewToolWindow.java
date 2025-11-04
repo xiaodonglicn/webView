@@ -3,21 +3,20 @@ package com.lxd.webviewplugin;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,9 +35,86 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private static final double ZOOM_STEP = 0.1;
     // 在类的字段部分添加以下新字段
     private JMenuItem backButton;
+    private JMenuItem devToolsButton;
     private JMenuItem forwardButton;
     private boolean isDarkMode = false;
     private JMenuItem themeToggleMenuItem;
+    private JFrame devToolsFrame;
+
+    private void toggleDevTools() {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            if (!JBCefApp.isSupported()) {
+                Messages.showErrorDialog("JCEF is disabled in IDE settings", "Error");
+                return;
+            }
+            // 添加关键检查：确保浏览器已正确初始化且有有效的CefBrowser实例
+            if (browser == null || browser.getCefBrowser() == null) {
+                Messages.showErrorDialog("Browser is not properly initialized", "Error");
+                return;
+            }
+
+            // 检查当前页面是否是可以打开开发者工具的有效页面
+            String currentUrl = browser.getCefBrowser().getURL();
+            if (currentUrl == null || currentUrl.isEmpty() ||
+                    currentUrl.equals("about:blank") ||
+                    currentUrl.startsWith("file:///jbcefbrowser/")) {
+                Messages.showInfoMessage("Please load a web page first before opening F12", "Info");
+                return;
+            }
+
+            try {
+                // 检查开发者工具窗口是否已存在
+                if (devToolsFrame != null) {
+                    devToolsFrame.dispose();
+                    devToolsFrame = null;
+                    return;
+                }
+                // 优先尝试使用带坐标参数的版本
+                Point inspectAt = calculateDevToolsPosition();
+                CefBrowser devTools = browser.getCefBrowser().getDevTools(inspectAt);
+                // 失败时回退到无参版本
+                if (devTools == null) {
+                    devTools = browser.getCefBrowser().getDevTools();
+                }
+                if (devTools == null) {
+                    Messages.showErrorDialog("Developer tools are not available", "Error");
+                    return;
+                }
+                // 创建开发者工具窗口
+                devToolsFrame = new JFrame("WebView DevTools");
+                devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                devToolsFrame.setSize(800, 600);
+                devToolsFrame.setLocationRelativeTo(null);
+                // 添加开发者工具组件
+                Component devToolsUI = devTools.getUIComponent();
+                if (devToolsUI != null) {
+                    devToolsFrame.add(devToolsUI);
+                    devToolsFrame.setVisible(true);
+                }
+                // 窗口关闭监听
+                devToolsFrame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        devToolsFrame = null;
+                    }
+                });
+            } catch (Exception e) {
+                Messages.showErrorDialog("The current version does not support it", "Error");
+                if (devToolsFrame != null) {
+                    devToolsFrame.dispose();
+                    devToolsFrame = null;
+                }
+            }
+        });
+    }
+
+    // 计算开发者工具窗口的显示位置
+    private Point calculateDevToolsPosition() {
+        // 默认位置（主窗口右侧）
+        Point mainWindowLoc = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .getActiveWindow().getLocation();
+        return new Point(mainWindowLoc.x + 650, mainWindowLoc.y + 50);
+    }
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -134,6 +210,9 @@ public class WebViewToolWindow implements ToolWindowFactory {
         moreMenu.add(createForwardMenuItem());
         moreMenu.addSeparator();
 
+        moreMenu.add(createDevToolMenuItem());
+        moreMenu.addSeparator();
+
         // 添加原有菜单项
         moreMenu.add(createHomeMenuItem());
         moreMenu.addSeparator();
@@ -146,6 +225,13 @@ public class WebViewToolWindow implements ToolWindowFactory {
         // 绑定弹出菜单
         moreButton.addActionListener(e -> moreMenu.show(moreButton, 0, moreButton.getHeight()));
         return moreButton;
+    }
+
+    private JMenuItem createDevToolMenuItem() {
+        devToolsButton = new JMenuItem("F12");
+        devToolsButton.setIcon(AllIcons.Toolwindows.ToolWindowDebugger);
+        devToolsButton.addActionListener(e -> toggleDevTools());
+        return devToolsButton;
     }
 
     private JMenuItem createBackMenuItem() {
