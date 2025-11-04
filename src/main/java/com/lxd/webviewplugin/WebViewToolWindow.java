@@ -21,8 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WebViewToolWindow implements ToolWindowFactory {
 
@@ -37,84 +35,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private JMenuItem backButton;
     private JMenuItem devToolsButton;
     private JMenuItem forwardButton;
-    private boolean isDarkMode = false;
-    private JMenuItem themeToggleMenuItem;
-    private JFrame devToolsFrame;
-
-    private void toggleDevTools() {
-        ApplicationManager.getApplication().invokeLater(() -> {
-            if (!JBCefApp.isSupported()) {
-                Messages.showErrorDialog("JCEF is disabled in IDE settings", "Error");
-                return;
-            }
-            // 添加关键检查：确保浏览器已正确初始化且有有效的CefBrowser实例
-            if (browser == null || browser.getCefBrowser() == null) {
-                Messages.showErrorDialog("Browser is not properly initialized", "Error");
-                return;
-            }
-
-            // 检查当前页面是否是可以打开开发者工具的有效页面
-            String currentUrl = browser.getCefBrowser().getURL();
-            if (currentUrl == null || currentUrl.isEmpty() ||
-                    currentUrl.equals("about:blank") ||
-                    currentUrl.startsWith("file:///jbcefbrowser/")) {
-                Messages.showInfoMessage("Please load a web page first before opening F12", "Info");
-                return;
-            }
-
-            try {
-                // 检查开发者工具窗口是否已存在
-                if (devToolsFrame != null) {
-                    devToolsFrame.dispose();
-                    devToolsFrame = null;
-                    return;
-                }
-                // 优先尝试使用带坐标参数的版本
-                Point inspectAt = calculateDevToolsPosition();
-                CefBrowser devTools = browser.getCefBrowser().getDevTools(inspectAt);
-                // 失败时回退到无参版本
-                if (devTools == null) {
-                    devTools = browser.getCefBrowser().getDevTools();
-                }
-                if (devTools == null) {
-                    Messages.showErrorDialog("Developer tools are not available", "Error");
-                    return;
-                }
-                // 创建开发者工具窗口
-                devToolsFrame = new JFrame("WebView DevTools");
-                devToolsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                devToolsFrame.setSize(800, 600);
-                devToolsFrame.setLocationRelativeTo(null);
-                // 添加开发者工具组件
-                Component devToolsUI = devTools.getUIComponent();
-                if (devToolsUI != null) {
-                    devToolsFrame.add(devToolsUI);
-                    devToolsFrame.setVisible(true);
-                }
-                // 窗口关闭监听
-                devToolsFrame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        devToolsFrame = null;
-                    }
-                });
-            } catch (Exception e) {
-                Messages.showErrorDialog("The current version does not support it", "Error");
-                if (devToolsFrame != null) {
-                    devToolsFrame.dispose();
-                    devToolsFrame = null;
-                }
-            }
-        });
-    }
-
-    // 计算开发者工具窗口的显示位置
-    private Point calculateDevToolsPosition() {
-        // 默认位置（主窗口右侧）
-        Point mainWindowLoc = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .getActiveWindow().getLocation();
-        return new Point(mainWindowLoc.x + 650, mainWindowLoc.y + 50);
-    }
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -155,28 +75,16 @@ public class WebViewToolWindow implements ToolWindowFactory {
         urlField = new JTextField(URL_MSG);
         urlField.setForeground(Color.GRAY);
         addPlaceholder();
-
-//        JButton visitButton = this.createGoButton();
         JButton moreButton = this.createMoreDropdownButton();
 
         // 布局地址栏和按钮
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
-//        buttonPanel.add(visitButton);
         buttonPanel.add(moreButton);
 
         topPanel.add(urlField, BorderLayout.CENTER);
         topPanel.add(buttonPanel, BorderLayout.EAST);
 
         return topPanel;
-    }
-
-    private void toggleTheme() {
-        isDarkMode = !isDarkMode;
-        // 更新菜单项文本
-        if (themeToggleMenuItem != null) {
-            themeToggleMenuItem.setText(isDarkMode ? "Light Mode" : "Dark Mode");
-        }
-        applyTheme();
     }
 
     // 添加更新导航按钮状态的方法
@@ -209,15 +117,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
         moreMenu.add(createBackMenuItem());
         moreMenu.add(createForwardMenuItem());
         moreMenu.addSeparator();
-
+        // 调试功能
         moreMenu.add(createDevToolMenuItem());
         moreMenu.addSeparator();
-
         // 添加原有菜单项
         moreMenu.add(createHomeMenuItem());
         moreMenu.addSeparator();
-//        moreMenu.add(createThemeToggleMenuItem());
-//        moreMenu.addSeparator();
         moreMenu.add(createZoomInMenuItem());
         moreMenu.add(createZoomOutMenuItem());
         moreMenu.add(createResetZoomMenuItem());
@@ -240,7 +145,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
         backButton.addActionListener(e -> {
             if (browser != null) {
                 browser.getCefBrowser().goBack();
-                // 移除手动更新按钮状态，改由 LoadHandler 处理
             }
         });
         return backButton;
@@ -252,17 +156,9 @@ public class WebViewToolWindow implements ToolWindowFactory {
         forwardButton.addActionListener(e -> {
             if (browser != null) {
                 browser.getCefBrowser().goForward();
-                // 移除手动更新按钮状态，改由 LoadHandler 处理
             }
         });
         return forwardButton;
-    }
-
-    private JMenuItem createThemeToggleMenuItem() {
-        themeToggleMenuItem = new JMenuItem(isDarkMode ? "Light Mode" : "Dark Mode");
-        themeToggleMenuItem.setIcon(AllIcons.General.InspectionsEye);
-        themeToggleMenuItem.addActionListener(e -> toggleTheme());
-        return themeToggleMenuItem;
     }
 
     private JMenuItem createHomeMenuItem() {
@@ -396,59 +292,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
         });
     }
 
-    private void applyTheme() {
-        if (browser == null) return;
-
-        String css = isDarkMode ?
-                "body, html { " +
-                        "  background-color: #1e1e1e !important; " +
-                        "  color: #ffffff !important; " +
-                        "} " +
-                        "* { " +
-                        "  background-color: #1e1e1e !important; " +
-                        "  color: #ffffff !important; " +
-                        "  border-color: #444444 !important; " +
-                        "} " +
-                        "a { " +
-                        "  color: #4fc1ff !important; " +
-                        "} " +
-                        "a:hover { " +
-                        "  color: #7dd3ff !important; " +
-                        "} " +
-                        "button, input, select, textarea { " +
-                        "  background-color: #2d2d2d !important; " +
-                        "  color: #ffffff !important; " +
-                        "  border: 1px solid #555555 !important; " +
-                        "} " +
-                        "::placeholder { " +
-                        "  color: #aaaaaa !important; " +
-                        "}"
-                :
-                "body, html { " +
-                        "  background-color: #ffffff !important; " +
-                        "  color: #000000 !important; " +
-                        "} " +
-                        "* { " +
-                        "  background-color: initial !important; " +
-                        "  color: inherit !important; " +
-                        "  border-color: initial !important; " +
-                        "}";
-
-        // 注入CSS到当前页面
-        String script = "var existingStyle = document.getElementById('intellij-theme-style'); " +
-                "if (existingStyle) { " +
-                "  existingStyle.innerHTML = '" + css.replace("'", "\\'") + "'; " +
-                "} else { " +
-                "  var style = document.createElement('style'); " +
-                "  style.id = 'intellij-theme-style'; " +
-                "  style.type = 'text/css'; " +
-                "  style.innerHTML = '" + css.replace("'", "\\'") + "'; " +
-                "  document.getElementsByTagName('head')[0].appendChild(style); " +
-                "}";
-
-        browser.getCefBrowser().executeJavaScript(script, browser.getCefBrowser().getURL(), 0);
-    }
-
     /**
      * 添加加载监听器来处理URL更新和按钮状态
      */
@@ -495,5 +338,42 @@ public class WebViewToolWindow implements ToolWindowFactory {
                 return true; // 返回true表示取消弹窗
             }
         }, browser.getCefBrowser());
+    }
+
+    private void toggleDevTools() {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            if (!JBCefApp.isSupported()) {
+                Messages.showErrorDialog("JCEF is disabled in IDE settings", "Error");
+                return;
+            }
+
+            if (browser == null || browser.getCefBrowser() == null) {
+                Messages.showErrorDialog("Browser is not properly initialized", "Error");
+                return;
+            }
+
+            // 检查当前页面是否是可以打开开发者工具的有效页面
+            String currentUrl = browser.getCefBrowser().getURL();
+            if (currentUrl == null || currentUrl.isEmpty() ||
+                    currentUrl.equals("about:blank") ||
+                    currentUrl.startsWith("file:///jbcefbrowser/")) {
+                Messages.showInfoMessage("Please load a web page first before opening F12", "Info");
+                return;
+            }
+
+            try {
+                Project project = ApplicationManager.getApplication().getService(com.intellij.openapi.project.ProjectManager.class)
+                        .getOpenProjects()[0]; // 获取当前项目
+                // 如果开发者工具已经打开，则关闭它
+                if (DevToolsToolWindowFactory.isDevToolsOpen(project)) {
+                    DevToolsToolWindowFactory.closeDevTools(project);
+                } else {
+                    // 否则打开开发者工具
+                    DevToolsToolWindowFactory.openDevTools(project, browser.getCefBrowser());
+                }
+            } catch (Exception e) {
+                Messages.showErrorDialog("Failed to toggle developer tools: " + e.getMessage(), "Error");
+            }
+        });
     }
 }
