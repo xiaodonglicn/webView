@@ -28,6 +28,9 @@
                     factoryClass="com.lxd.webviewplugin.DevToolsToolWindowFactory"
                     icon="AllIcons.Toolwindows.ToolWindowDebugger"
                     secondary="true"/>
+
+        <codeInsight.lineMarkerProvider language="HTML"
+                                        implementationClass="com.lxd.webviewplugin.HtmlWebViewLineMarkerProvider"/>
     </extensions>
 
     <!-- Description -->
@@ -76,6 +79,7 @@
                 <li>Click on the link in the web page to optimize</li>
                 <li>Prompt optimization</li>
                 <li>Add debugging functions</li>
+                <li>Add an entry point for WebView to the html file</li>
             </ul>
         ]]>
     </change-notes>

@@ -35,10 +35,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private JMenuItem backButton;
     private JMenuItem devToolsButton;
     private JMenuItem forwardButton;
+    private static WebViewToolWindow instance;
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
         ApplicationManager.getApplication().invokeLater(() -> {
+            instance = this;
             // 创建主面板
             JPanel panel = new JPanel(new BorderLayout());
             // 构建顶部工具栏
@@ -373,6 +375,18 @@ public class WebViewToolWindow implements ToolWindowFactory {
                 }
             } catch (Exception e) {
                 Messages.showErrorDialog("Failed to toggle developer tools: " + e.getMessage(), "Error");
+            }
+        });
+    }
+
+    public static void loadUrlFromExternal(Project project, String url) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+            if (instance != null && instance.browser != null) {
+                instance.browser.loadURL(url);
+                if (instance.urlField != null) {
+                    instance.urlField.setText(url);
+                    instance.urlField.setForeground(Color.LIGHT_GRAY);
+                }
             }
         });
     }
