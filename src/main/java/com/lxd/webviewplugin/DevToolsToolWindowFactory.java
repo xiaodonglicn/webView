@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Method;
 
 public class DevToolsToolWindowFactory implements ToolWindowFactory {
 
@@ -31,7 +32,6 @@ public class DevToolsToolWindowFactory implements ToolWindowFactory {
             return;
         }
 
-        // 获取或创建开发者工具窗口
         ToolWindow devToolsWindow = com.intellij.openapi.wm.ToolWindowManager.getInstance(project)
                 .getToolWindow("WebView DevTools");
 
@@ -39,26 +39,30 @@ public class DevToolsToolWindowFactory implements ToolWindowFactory {
             return;
         }
 
-        // 如果开发者工具已经打开，先关闭
         closeDevTools(project);
 
         ApplicationManager.getApplication().invokeLater(() -> {
             try {
-                // 创建开发者工具浏览器
-                devToolsBrowser = new JBCefBrowser();
+                // 使用反射检查并调用 getDevTools 方法
+                CefBrowser devTools = null;
+                try {
+                    Method getDevToolsMethod = CefBrowser.class.getMethod("getDevTools");
+                    devTools = (CefBrowser) getDevToolsMethod.invoke(mainBrowser);
+                } catch (NoSuchMethodException e) {
+                    Messages.showInfoMessage("Current IDE version doesn't support DevTools functionality", "Info");
+                    return;
+                }
 
-                // 获取开发者工具
-                CefBrowser devTools = mainBrowser.getDevTools();
                 if (devTools == null) {
-                    Messages.showErrorDialog("Developer tools are not available", "Error");
+                    Messages.showInfoMessage("Developer tools are not available", "Info");
                     return;
                 }
 
                 // 将开发者工具UI添加到我们的浏览器组件中
                 Component devToolsUI = devTools.getUIComponent();
                 if (devToolsUI != null) {
-                    JPanel panel = new JPanel(new java.awt.BorderLayout());
-                    panel.add(devToolsUI, java.awt.BorderLayout.CENTER);
+                    JPanel panel = new JPanel(new BorderLayout());
+                    panel.add(devToolsUI, BorderLayout.CENTER);
 
                     // 创建内容
                     ContentFactory contentFactory = ApplicationManager.getApplication().getService(ContentFactory.class);
@@ -70,12 +74,11 @@ public class DevToolsToolWindowFactory implements ToolWindowFactory {
 
                     // 显示工具窗口
                     devToolsWindow.show(() -> {
-                        // 激活时的回调
                         contentManager.setSelectedContent(devToolsContent);
                     });
                 }
             } catch (Exception e) {
-                Messages.showInfoMessage("The current version does not support it for the time being", "Info");
+                Messages.showInfoMessage("The current version does not support DevTools: " + e.getMessage(), "Info");
             }
         });
     }
