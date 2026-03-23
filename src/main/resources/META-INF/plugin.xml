@@ -82,6 +82,7 @@
                 <li>Prompt optimization</li>
                 <li>Add debugging functions</li>
                 <li>Add an entry point for WebView to the html file</li>
+                <li>High Memory Usage Alert Optimization</li>
             </ul>
         ]]>
     </change-notes>

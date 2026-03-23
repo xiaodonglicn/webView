@@ -21,6 +21,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 
 public class WebViewToolWindow implements ToolWindowFactory {
 
@@ -28,14 +31,14 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private JBCefBrowser browser;
     private JTextField urlField;
     private ContentFactory contentFactory;
-    // 缩放控制变量
     private double zoomFactor = 1.0;
     private static final double ZOOM_STEP = 0.1;
-    // 在类的字段部分添加以下新字段
     private JMenuItem backButton;
     private JMenuItem devToolsButton;
     private JMenuItem forwardButton;
     private static WebViewToolWindow instance;
+    // 内存使用90%阈值
+    private static final double MEMORY_WARNING_THRESHOLD = 0.90;
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
@@ -137,7 +140,14 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private JMenuItem createDevToolMenuItem() {
         devToolsButton = new JMenuItem("F12");
         devToolsButton.setIcon(AllIcons.Toolwindows.ToolWindowDebugger);
-        devToolsButton.addActionListener(e -> toggleDevTools());
+        devToolsButton.addActionListener(e -> {
+            Project project = ApplicationManager.getApplication().getService(
+                    com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+            // 打开DevTools前检查内存
+            if (checkMemory(project)) {
+                toggleDevTools();
+            }
+        });
         return devToolsButton;
     }
 
@@ -146,7 +156,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
         backButton.setIcon(AllIcons.Actions.Back);
         backButton.addActionListener(e -> {
             if (browser != null) {
-                browser.getCefBrowser().goBack();
+                Project project = ApplicationManager.getApplication().getService(
+                        com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+                // 后退前检查内存
+                if (checkMemory(project)) {
+                    browser.getCefBrowser().goBack();
+                }
             }
         });
         return backButton;
@@ -157,7 +172,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
         forwardButton.setIcon(AllIcons.Actions.Forward);
         forwardButton.addActionListener(e -> {
             if (browser != null) {
-                browser.getCefBrowser().goForward();
+                Project project = ApplicationManager.getApplication().getService(
+                        com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+                // 前进前检查内存
+                if (checkMemory(project)) {
+                    browser.getCefBrowser().goForward();
+                }
             }
         });
         return forwardButton;
@@ -166,7 +186,14 @@ public class WebViewToolWindow implements ToolWindowFactory {
     private JMenuItem createHomeMenuItem() {
         JMenuItem item = new JMenuItem("Home");
         item.setIcon(AllIcons.Nodes.HomeFolder);
-        item.addActionListener(e -> loadWelcomeMessage2());
+        item.addActionListener(e -> {
+            Project project = ApplicationManager.getApplication().getService(
+                    com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+            // 返回主页前检查内存
+            if (checkMemory(project)) {
+                loadWelcomeMessage2();
+            }
+        });
         return item;
     }
 
@@ -250,18 +277,20 @@ public class WebViewToolWindow implements ToolWindowFactory {
         });
     }
 
-    /**
-     * 导航到URL字段中指定的网址
-     */
     private void navigateToUrl() {
         ApplicationManager.getApplication().invokeLater(() -> {
             String url = urlField.getText().trim();
             if (!url.isEmpty() && browser != null) {
-                if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                    url = "https://" + url;
+                Project project = ApplicationManager.getApplication().getService(
+                        com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+                // 加载URL前检查内存
+                if (checkMemory(project)) {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        url = "https://" + url;
+                    }
+                    browser.loadURL(url);
+                    onUrlLoaded();
                 }
-                browser.loadURL(url);
-                onUrlLoaded(); // 更新导航按钮状态
             }
         });
     }
@@ -302,7 +331,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
                 ApplicationManager.getApplication().invokeLater(() -> {
-                    // 更新导航按钮状态
                     if (WebViewToolWindow.this.backButton != null) {
                         WebViewToolWindow.this.backButton.setEnabled(canGoBack);
                     }
@@ -335,9 +363,13 @@ public class WebViewToolWindow implements ToolWindowFactory {
         browser.getJBCefClient().addLifeSpanHandler(new org.cef.handler.CefLifeSpanHandlerAdapter() {
             @Override
             public boolean onBeforePopup(CefBrowser browser, CefFrame frame, String target_url, String target_frame_name) {
-                // 阻止弹出新窗口，在当前浏览器中加载URL
-                WebViewToolWindow.this.browser.loadURL(target_url);
-                return true; // 返回true表示取消弹窗
+                Project project = ApplicationManager.getApplication().getService(
+                        com.intellij.openapi.project.ProjectManager.class).getOpenProjects()[0];
+                // 打开新窗口前检查内存
+                if (checkMemory(project)) {
+                    WebViewToolWindow.this.browser.loadURL(target_url);
+                }
+                return true;
             }
         }, browser.getCefBrowser());
     }
@@ -354,7 +386,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
                 return;
             }
 
-            // 检查当前页面是否是可以打开开发者工具的有效页面
             String currentUrl = browser.getCefBrowser().getURL();
             if (currentUrl == null || currentUrl.isEmpty() ||
                     currentUrl.equals("about:blank") ||
@@ -370,7 +401,6 @@ public class WebViewToolWindow implements ToolWindowFactory {
                 if (DevToolsToolWindowFactory.isDevToolsOpen(project)) {
                     DevToolsToolWindowFactory.closeDevTools(project);
                 } else {
-                    // 否则打开开发者工具
                     DevToolsToolWindowFactory.openDevTools(project, browser.getCefBrowser());
                 }
             } catch (Exception e) {
@@ -382,12 +412,62 @@ public class WebViewToolWindow implements ToolWindowFactory {
     public static void loadUrlFromExternal(Project project, String url) {
         ApplicationManager.getApplication().invokeLater(() -> {
             if (instance != null && instance.browser != null) {
-                instance.browser.loadURL(url);
-                if (instance.urlField != null) {
-                    instance.urlField.setText(url);
-                    instance.urlField.setForeground(Color.LIGHT_GRAY);
+                // 外部调用加载URL前也检查内存
+                if (instance.checkMemory(project)) {
+                    instance.browser.loadURL(url);
+                    if (instance.urlField != null) {
+                        instance.urlField.setText(url);
+                        instance.urlField.setForeground(Color.LIGHT_GRAY);
+                    }
                 }
             }
         });
     }
+
+    /**
+     * 检查内存使用率，超过90%则弹窗警告并提供选项
+     * @param project 当前项目
+     * @return true-继续执行操作，false-取消操作
+     */
+    private boolean checkMemory(Project project) {
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+
+        long usedMemory = heapMemoryUsage.getUsed();
+        long maxMemory = heapMemoryUsage.getMax();
+        double usagePercent = (double) usedMemory / maxMemory;
+
+        if (usagePercent >= MEMORY_WARNING_THRESHOLD) {
+            long usedMB = usedMemory / (1024 * 1024);
+            long maxMB = maxMemory / (1024 * 1024);
+            int percent = (int) (usagePercent * 100);
+
+            String message = String.format(
+                    "High Memory Usage Alert\n\n" +
+                            "Current Usage: %d MB / %d MB (%d%%)\n\n" +
+                            "Continuing may cause IDE lag or crash.\n\n" +
+                            "Suggestion: Increase IDE memory configuration.\n\n" +
+                            "How to fix:\n" +
+                            "Help → Edit Custom VM Options → Add: -Xmx\n" +
+                            "Then restart IDE.",
+                    usedMB, maxMB, percent
+            );
+
+            // 显示确认对话框，返回用户选择
+            int result = Messages.showYesNoDialog(
+                    project,
+                    message,
+                    "Memory Warning",
+                    "Continue",  // Yes 按钮文字
+                    "Cancel",    // No 按钮文字
+                    Messages.getWarningIcon()
+            );
+
+            // 用户点击 Continue 返回 true，点击 Cancel 返回 false
+            return result == Messages.YES;
+        }
+
+        return true; // 内存充足，继续执行
+    }
+
 }
