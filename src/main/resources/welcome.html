@@ -12,9 +12,9 @@
             height: 100vh;
             margin: 0;
             background: radial-gradient(circle, #dcdcdc, #8c8c8c);
-            color: rgba(255, 255, 255, 0.8); /* 浅色文字 */
+            color: rgba(255, 255, 255, 0.8);
             font-family: 'Noto Serif SC', serif;
-            font-size: 18px; /* 调整字体大小 */
+            font-size: 18px;
             line-height: 1.5;
             text-align: center;
         }
@@ -25,14 +25,34 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            background: rgba(0, 0, 0, 0.1); /* 背景透明度 */
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .memory-tip {
+            margin-top: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            padding-top: 20px;
+        }
+
+        .memory-tip a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .memory-tip a:hover {
+            color: rgba(255, 255, 255, 1);
         }
     </style>
 </head>
 <body>
-<!-- 提示框 -->
 <div class="prompt-box">
     Enter the URL in the input box above and then click [Enter] to start your experience
+    <div class="memory-tip">
+        Tip: The browser uses IDE memory. Please configure IDE memory for optimal performance.<br>
+    </div>
 </div>
 </body>
 </html>
