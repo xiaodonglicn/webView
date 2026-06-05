@@ -83,6 +83,7 @@
                 <li>Add debugging functions</li>
                 <li>Add an entry point for WebView to the html file</li>
                 <li>High Memory Usage Alert Optimization</li>
+                <li>Topic Optimization</li>
             </ul>
         ]]>
     </change-notes>

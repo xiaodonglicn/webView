@@ -24,6 +24,10 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
+import javax.swing.border.Border;
+import java.awt.Color;
 
 public class WebViewToolWindow implements ToolWindowFactory {
 
@@ -114,9 +118,12 @@ public class WebViewToolWindow implements ToolWindowFactory {
 
     private JButton createMoreDropdownButton() {
         JButton moreButton = new JButton("Tools", AllIcons.General.ExternalTools);
-        moreButton.setHorizontalTextPosition(SwingConstants.LEFT); // 图标在左，文字在右
-        moreButton.setIconTextGap(8); // 文字与图标间距
+        moreButton.setHorizontalTextPosition(SwingConstants.LEFT);
+        moreButton.setIconTextGap(8);
+
         JPopupMenu moreMenu = new JPopupMenu();
+        // 应用主题样式到弹出菜单
+        applyThemeToPopupMenu(moreMenu);
 
         // 添加导航菜单项
         moreMenu.add(createBackMenuItem());
@@ -136,6 +143,60 @@ public class WebViewToolWindow implements ToolWindowFactory {
         moreButton.addActionListener(e -> moreMenu.show(moreButton, 0, moreButton.getHeight()));
         return moreButton;
     }
+
+    /**
+     * 辅助方法：将当前 IDE 主题样式应用到 JPopupMenu 及其子项
+     */
+    private void applyThemeToPopupMenu(JPopupMenu menu) {
+        // 1. 设置背景色：使用 IDE 面板背景色，它会自动适应 Light/Dark 主题
+        Color bgColor = UIUtil.getPanelBackground();
+        menu.setBackground(bgColor);
+
+        // 2. 设置边框：使用 JBUI 提供的标准边框，通常包含细微的分隔线
+        Border border = JBUI.Borders.customLine(JBUI.CurrentTheme.CustomFrameDecorations.separatorForeground(), 1);
+        menu.setBorder(border);
+
+        // 3. 遍历所有组件，确保 MenuItem 也继承背景色
+        for (Component comp : menu.getComponents()) {
+            if (comp instanceof JMenuItem) {
+                applyThemeToMenuItem((JMenuItem) comp);
+            } else if (comp instanceof JPopupMenu.Separator) {
+                // 分隔线通常不需要特殊处理，JBUI 边框已处理整体外观
+                comp.setBackground(bgColor);
+            }
+        }
+
+        // 4. 监听菜单显示事件，以防动态添加的子项未应用样式（虽然这里是静态添加，但作为好习惯）
+        menu.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent e) {
+                // 每次显示前再次确保样式正确，防止 LookAndFeel 切换后未更新
+                menu.setBackground(UIUtil.getPanelBackground());
+                for (Component comp : menu.getComponents()) {
+                    if (comp instanceof JMenuItem) {
+                        applyThemeToMenuItem((JMenuItem) comp);
+                    }
+                }
+            }
+            @Override
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent e) {}
+            @Override
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent e) {}
+        });
+    }
+
+    /**
+     * 辅助方法：将当前 IDE 主题样式应用到 JMenuItem
+     */
+    private void applyThemeToMenuItem(JMenuItem menuItem) {
+        Color bgColor = UIUtil.getPanelBackground();
+        Color fgColor = UIUtil.getLabelForeground();
+        menuItem.setBackground(bgColor);
+        menuItem.setForeground(fgColor);
+        // 由于 JMenuItem 的 UI Delegate 可能覆盖 setBackground，我们通常需要设置 ContentAreaFilled 为 true
+        menuItem.setContentAreaFilled(true);
+    }
+
 
     private JMenuItem createDevToolMenuItem() {
         devToolsButton = new JMenuItem("F12");
