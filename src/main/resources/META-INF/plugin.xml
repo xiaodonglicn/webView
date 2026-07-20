@@ -10,7 +10,7 @@
 
     <!-- Actions -->
     <actions>
-        <action id="com.lxd.webviewplugin.OpenWebViewAction" icon="AllIcons.Javaee.WebModuleGroup"
+        <action id="com.lxd.webviewplugin.OpenWebViewAction" icon="/META-INF/webModuleGroup.svg"
                 class="com.lxd.webviewplugin.OpenWebViewAction" text="Open WebView"
                 description="Open a WebView in a ToolWindow">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
@@ -19,7 +19,7 @@
 
     <!-- Extensions -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="WebView" anchor="right" icon="AllIcons.Javaee.WebModuleGroup"
+        <toolWindow id="WebView" anchor="right" icon="/META-INF/webModuleGroup.svg"
                     factoryClass="com.lxd.webviewplugin.WebViewToolWindow"/>
 
         <!-- 内部打开一个窗口展示 -->

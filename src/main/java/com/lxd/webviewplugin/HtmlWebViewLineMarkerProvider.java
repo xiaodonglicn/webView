@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -29,6 +30,7 @@ public class HtmlWebViewLineMarkerProvider implements LineMarkerProvider {
     public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
         // 只在HTML文件的<html>标签添加标记
         try {
+            Icon customIcon = IconLoader.getIcon("/META-INF/webModuleGroup.svg", getClass());
             if (element instanceof XmlTag && element.getParent() instanceof XmlDocument) {
                 XmlTag tag = (XmlTag) element;
                 if ("html".equals(tag.getName())) {
@@ -39,7 +41,7 @@ public class HtmlWebViewLineMarkerProvider implements LineMarkerProvider {
                             return new LineMarkerInfo<>(
                                     element,
                                     element.getTextRange(),
-                                    AllIcons.Javaee.WebModuleGroup,
+                                    customIcon,
                                     e -> "Open in WebView",
                                     new WebViewNavigationHandler(virtualFile),
                                     GutterIconRenderer.Alignment.CENTER,
